@@ -1,18 +1,19 @@
 using System;
 using System.Collections.Generic;
+
 class Program
 {
     static void Main(string[] args)
     {
-        // Input string
-        string input23 = "x:userinput; y:userinput; z:4; result: x * y + z;";
-        // Dictionary to store variables and their values
+        // Input string, only z is user input
+        string input23 = "x:4; y:9; z:userinput; result: x * y + z;";
+
         Dictionary<string, double> variables23 = new Dictionary<string, double>();
+
         try
         {
-            // Split the input string into parts
             string[] parts = input23.Split(';', StringSplitOptions.RemoveEmptyEntries);
-            // Process each part to extract variables and values
+
             foreach (string part in parts)
             {
                 string trimmedPart = part.Trim();
@@ -23,13 +24,14 @@ class Program
                     {
                         string varName = keyValue[0].Trim();
                         string varValue = keyValue[1].Trim();
-                        // Handle user input prompts
-                        if (varValue.Equals("userinput") || varValue.Equals("userinptut"))
+
+                        // Only ask input for z
+                        if (varValue.Equals("userinput"))
                         {
                             Console.Write($"Enter value for {varName}: ");
                             varValue = Console.ReadLine();
                         }
-                        // Parse the value to double
+
                         if (double.TryParse(varValue, out double value))
                         {
                             variables23[varName] = value;
@@ -42,32 +44,26 @@ class Program
                     }
                 }
             }
-            // Find the result expression
-            string expression23 = "";
-            foreach (string part in parts)
+
+            // Use fixed x = 4 and y = 9
+            double x = 4;
+            double y = 9;
+            variables23["x"] = x;
+            variables23["y"] = y;
+
+            if (variables23.ContainsKey("z"))
             {
-                if (part.Trim().StartsWith("result"))
-                {
-                    string[] resultParts = part.Split(':', 2);
-                    if (resultParts.Length == 2)
-                    {
-                        expression23 = resultParts[1].Trim();
-                    }
-                    break;
-                }
-            }
-            
-            // Evaluate the expression
-            if (variables23.ContainsKey("x") && variables23.ContainsKey("y") && variables23.ContainsKey("z"))
-            {
-                double result23 = variables23["x"] * variables23["y"] + variables23["z"];
-                // Display output in specified format
-                Console.WriteLine($"z = {variables23["z"]}");
+                double z = variables23["z"];
+                double result23 = x * y + z;
+
+                Console.WriteLine($"\nx = {x}");
+                Console.WriteLine($"y = {y}");
+                Console.WriteLine($"z = {z}");
                 Console.WriteLine($"Result = {result23}");
             }
             else
             {
-                Console.WriteLine("Error: Missing required variables x, y, or z.");
+                Console.WriteLine("Error: Missing required variable z.");
             }
         }
         catch (Exception ex)
